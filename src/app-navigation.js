@@ -1,20 +1,20 @@
 export default [
   {
-    text: 'Home',
+    text: 'Aktuálne dáta',
     path: '/home',
     icon: 'home',
   },
   {
-    text: 'Examples',
+    text: 'História',
     icon: 'folder',
     items: [
+      // {
+      //   text: 'Profile',
+      //   path: '/profile',
+      // },
       {
-        text: 'Profile',
-        path: '/profile',
-      },
-      {
-        text: 'Tasks',
-        path: '/tasks',
+        text: 'Dáta',
+        path: '/data',
       },
     ],
   },

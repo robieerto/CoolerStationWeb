@@ -1,4 +1,3 @@
-import auth from './auth';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 import Home from './views/home-page';
@@ -6,6 +5,7 @@ import Profile from './views/profile-page';
 import Tasks from './views/tasks-page';
 import defaultLayout from './layouts/side-nav-outer-toolbar';
 import simpleLayout from './layouts/single-card';
+import auth from '@/auth';
 
 function loadView(view) {
   return () => import(/* webpackChunkName: "login" */ `./views/${view}.vue`);
@@ -32,8 +32,8 @@ const router = new createRouter({
       component: Profile,
     },
     {
-      path: '/tasks',
-      name: 'tasks',
+      path: '/data',
+      name: 'Tasks',
       meta: {
         requiresAuth: true,
         layout: defaultLayout,
@@ -98,11 +98,13 @@ const router = new createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
   if (to.name === 'login-form' && auth.loggedIn()) {
     next({ name: 'home' });
   }
 
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
+  if (requiresAuth && !auth.loggedIn()) {
     if (!auth.loggedIn()) {
       next({
         name: 'login-form',

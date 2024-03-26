@@ -20,15 +20,15 @@ import DxContextMenu, { DxPosition } from 'devextreme-vue/context-menu';
 import DxList from 'devextreme-vue/list';
 
 export default {
-  props: {
-    menuMode: String,
-    menuItems: Array,
-    email: String,
-  },
   components: {
     DxContextMenu,
     DxPosition,
     DxList,
+  },
+  props: {
+    menuMode: String,
+    menuItems: Array,
+    email: String,
   },
 };
 </script>
@@ -57,7 +57,7 @@ export default {
     .user-image {
       width: 100%;
       height: 100%;
-      background: url('https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png') no-repeat #fff;
+      background: url('../assets/user.png') no-repeat #fff;
       background-size: cover;
     }
   }

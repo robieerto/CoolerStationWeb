@@ -16,7 +16,7 @@
       <dx-button-item>
         <dx-button-options width="100%" type="default" template="signInTemplate" :use-submit-behavior="true"> </dx-button-options>
       </dx-button-item>
-      <dx-item>
+      <!-- <dx-item>
         <template #default>
           <div class="link">
             <router-link to="/reset-password">Forgot password?</router-link>
@@ -25,7 +25,7 @@
       </dx-item>
       <dx-button-item>
         <dx-button-options text="Create an account" width="100%" :on-click="onCreateAccountClick" />
-      </dx-button-item>
+      </dx-button-item> -->
       <template #signInTemplate>
         <div>
           <span class="dx-button-text">
@@ -43,12 +43,22 @@ import DxLoadIndicator from 'devextreme-vue/load-indicator';
 import DxForm, { DxItem, DxEmailRule, DxRequiredRule, DxLabel, DxButtonItem, DxButtonOptions } from 'devextreme-vue/form';
 import notify from 'devextreme/ui/notify';
 
-import auth from '../auth';
+import auth from '@/auth';
 
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
+  components: {
+    DxLoadIndicator,
+    DxForm,
+    DxEmailRule,
+    DxRequiredRule,
+    DxItem,
+    DxLabel,
+    DxButtonItem,
+    DxButtonOptions,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -56,6 +66,7 @@ export default {
     const formData = reactive({
       email: '',
       password: '',
+      rememberMe: false,
     });
     const loading = ref(false);
 
@@ -64,9 +75,9 @@ export default {
     }
 
     async function onSubmit() {
-      const { email, password } = formData;
+      const { email, password, rememberMe } = formData;
       loading.value = true;
-      const result = await auth.logIn(email, password);
+      const result = await auth.logIn(email, password, rememberMe);
       if (!result.isOk) {
         loading.value = false;
         notify(result.message, 'error', 2000);
@@ -81,16 +92,6 @@ export default {
       onCreateAccountClick,
       onSubmit,
     };
-  },
-  components: {
-    DxLoadIndicator,
-    DxForm,
-    DxEmailRule,
-    DxRequiredRule,
-    DxItem,
-    DxLabel,
-    DxButtonItem,
-    DxButtonOptions,
   },
 };
 </script>

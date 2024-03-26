@@ -1,25 +1,30 @@
-const defaultUser = {
-  email: 'sandra@example.com',
-  avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png',
-};
+import { getAuth, setPersistence, signInWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, onAuthStateChanged, signOut } from 'firebase/auth';
 
 export default {
-  _user: defaultUser,
+  _user: null,
   loggedIn() {
     return !!this._user;
   },
 
-  async logIn(email, password) {
+  async logIn(email, password, rememberMe) {
     try {
+      const auth = getAuth();
       // Send request
-      console.log(email, password);
-      this._user = { ...defaultUser, email };
+      await setPersistence(auth, rememberMe ? browserSessionPersistence : inMemoryPersistence).then(async () => {
+        await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+          // Signed in
+          this._user = userCredential.user;
+        });
+      });
 
       return {
         isOk: true,
         data: this._user,
       };
-    } catch {
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log('Error: ' + errorCode + ' ' + errorMessage);
       return {
         isOk: false,
         message: 'Authentication failed',
@@ -28,22 +33,33 @@ export default {
   },
 
   async logOut() {
-    this._user = null;
+    const auth = getAuth();
+    await signOut(auth)
+      .then(() => {
+        this._user = null;
+      })
+      .catch(() => {});
   },
 
   async getUser() {
-    try {
-      // Send request
+    return this._user;
+  },
 
-      return {
-        isOk: true,
-        data: this._user,
-      };
-    } catch {
-      return {
-        isOk: false,
-      };
-    }
+  async setUser(user) {
+    this._user = user;
+  },
+
+  async initOnAuthStateChanged() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this._user = user;
+        console.log('User is signed in');
+      } else {
+        this._user = null;
+        console.log('User is signed out');
+      }
+    });
   },
 
   async resetPassword(email) {

@@ -14,7 +14,7 @@
       <dx-item location="after" locate-in-menu="auto" menu-item-template="menuUserItem">
         <template #default>
           <div>
-            <dx-button class="user-button authorization" :width="210" height="100%" styling-mode="text">
+            <dx-button class="user-button authorization" height="100%" styling-mode="text">
               <user-panel :email="email" :menu-items="userMenuItems" menu-mode="context" />
             </dx-button>
           </div>
@@ -31,13 +31,19 @@
 <script>
 import DxButton from 'devextreme-vue/button';
 import DxToolbar, { DxItem } from 'devextreme-vue/toolbar';
-import auth from '../auth';
+import auth from '@/auth';
 import { useRouter, useRoute } from 'vue-router';
 import { ref } from 'vue';
 
 import UserPanel from './user-panel';
 
 export default {
+  components: {
+    DxButton,
+    DxToolbar,
+    DxItem,
+    UserPanel,
+  },
   props: {
     menuToggleEnabled: Boolean,
     title: String,
@@ -49,14 +55,14 @@ export default {
     const route = useRoute();
 
     const email = ref('');
-    auth.getUser().then((e) => (email.value = e.data.email));
+    auth.getUser().then((e) => (email.value = e.email));
 
     const userMenuItems = [
-      {
-        text: 'Profile',
-        icon: 'user',
-        onClick: onProfileClick,
-      },
+      // {
+      //   text: 'Profile',
+      //   icon: 'user',
+      //   onClick: onProfileClick,
+      // },
       {
         text: 'Logout',
         icon: 'runner',
@@ -64,31 +70,25 @@ export default {
       },
     ];
 
-    function onLogoutClick() {
-      auth.logOut();
+    async function onLogoutClick() {
+      await auth.logOut();
       router.push({
         path: '/login-form',
         query: { redirect: route.path },
       });
     }
 
-    function onProfileClick() {
-      router.push({
-        path: '/profile',
-        query: { redirect: route.path },
-      });
-    }
+    // function onProfileClick() {
+    //   router.push({
+    //     path: '/profile',
+    //     query: { redirect: route.path },
+    //   });
+    // }
 
     return {
       email,
       userMenuItems,
     };
-  },
-  components: {
-    DxButton,
-    DxToolbar,
-    DxItem,
-    UserPanel,
   },
 };
 </script>
