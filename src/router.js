@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 import Home from './views/home-page';
 import Profile from './views/profile-page';
-import Tasks from './views/tasks-page';
+import Data from './views/data-page';
 import defaultLayout from './layouts/side-nav-outer-toolbar';
 import simpleLayout from './layouts/single-card';
 import auth from '@/auth';
@@ -33,12 +33,12 @@ const router = new createRouter({
     },
     {
       path: '/data',
-      name: 'Tasks',
+      name: 'Data',
       meta: {
         requiresAuth: true,
         layout: defaultLayout,
       },
-      component: Tasks,
+      component: Data,
     },
     {
       path: '/login-form',
@@ -46,7 +46,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: 'Sign In',
+        title: 'Prihlásenie',
       },
       component: loadView('login-form'),
     },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="content-block">Tasks</h2>
+    <h2 class="content-block">Dáta</h2>
 
     <dx-data-grid
       class="dx-card wide-card"
@@ -50,6 +50,14 @@ const priorities = [
 ];
 
 export default {
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxFilterRow,
+    DxLookup,
+    DxPager,
+    DxPaging,
+  },
   setup() {
     const dataSourceConfig = {
       store: {
@@ -65,14 +73,6 @@ export default {
       dataSourceConfig,
       priorities,
     };
-  },
-  components: {
-    DxDataGrid,
-    DxColumn,
-    DxFilterRow,
-    DxLookup,
-    DxPager,
-    DxPaging,
   },
 };
 </script>

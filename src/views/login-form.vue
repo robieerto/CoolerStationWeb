@@ -2,15 +2,15 @@
   <form class="login-form" @submit.prevent="onSubmit">
     <dx-form :form-data="formData" :disabled="loading">
       <dx-item data-field="email" editor-type="dxTextBox" :editor-options="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }">
-        <dx-required-rule message="Email is required" />
-        <dx-email-rule message="Email is invalid" />
+        <dx-required-rule message="Email je povinný" />
+        <dx-email-rule message="Email je nesprávny" />
         <dx-label :visible="false" />
       </dx-item>
-      <dx-item data-field="password" editor-type="dxTextBox" :editor-options="{ stylingMode: 'filled', placeholder: 'Password', mode: 'password' }">
-        <dx-required-rule message="Password is required" />
+      <dx-item data-field="password" editor-type="dxTextBox" :editor-options="{ stylingMode: 'filled', placeholder: 'Heslo', mode: 'password' }">
+        <dx-required-rule message="Heslo je povinné" />
         <dx-label :visible="false" />
       </dx-item>
-      <dx-item data-field="rememberMe" editor-type="dxCheckBox" :editor-options="{ text: 'Remember me', elementAttr: { class: 'form-text' } }">
+      <dx-item data-field="rememberMe" editor-type="dxCheckBox" :editor-options="{ text: 'Zapamätať si prihlásenie', elementAttr: { class: 'form-text' } }">
         <dx-label :visible="false" />
       </dx-item>
       <dx-button-item>
@@ -30,7 +30,7 @@
         <div>
           <span class="dx-button-text">
             <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
-            <span v-if="!loading">Sign In</span>
+            <span v-if="!loading">Prihlásiť</span>
           </span>
         </div>
       </template>

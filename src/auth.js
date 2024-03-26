@@ -27,7 +27,7 @@ export default {
       console.log('Error: ' + errorCode + ' ' + errorMessage);
       return {
         isOk: false,
-        message: 'Authentication failed',
+        message: 'Autentifikácia zlyhala',
       };
     }
   },
@@ -73,7 +73,7 @@ export default {
     } catch {
       return {
         isOk: false,
-        message: 'Failed to reset password',
+        message: 'Chyba pri resetovaní hesla',
       };
     }
   },
@@ -89,7 +89,7 @@ export default {
     } catch {
       return {
         isOk: false,
-        message: 'Failed to change password',
+        message: 'Chyba pri zmene hesla',
       };
     }
   },
@@ -105,7 +105,7 @@ export default {
     } catch {
       return {
         isOk: false,
-        message: 'Failed to create account',
+        message: 'Chyba pri vytváraní účtu',
       };
     }
   },

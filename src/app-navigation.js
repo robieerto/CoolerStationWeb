@@ -6,7 +6,7 @@ export default [
   },
   {
     text: 'História',
-    icon: 'folder',
+    icon: 'clock',
     items: [
       // {
       //   text: 'Profile',
@@ -14,6 +14,7 @@ export default [
       // },
       {
         text: 'Dáta',
+        icon: 'folder',
         path: '/data',
       },
     ],

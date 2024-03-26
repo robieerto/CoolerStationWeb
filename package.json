@@ -11,6 +11,7 @@
     "postinstall": "npm run build-themes"
   },
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "core-js": "^3.8.3",
     "devextreme": "23.2.3",
     "devextreme-vue": "23.2.3",
