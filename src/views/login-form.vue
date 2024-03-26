@@ -10,9 +10,9 @@
         <dx-required-rule message="Heslo je povinné" />
         <dx-label :visible="false" />
       </dx-item>
-      <dx-item data-field="rememberMe" editor-type="dxCheckBox" :editor-options="{ text: 'Zapamätať si prihlásenie', elementAttr: { class: 'form-text' } }">
+      <!-- <dx-item data-field="rememberMe" editor-type="dxCheckBox" :editor-options="{ text: 'Zapamätať si prihlásenie', elementAttr: { class: 'form-text' } }">
         <dx-label :visible="false" />
-      </dx-item>
+      </dx-item> -->
       <dx-button-item>
         <dx-button-options width="100%" type="default" template="signInTemplate" :use-submit-behavior="true"> </dx-button-options>
       </dx-button-item>

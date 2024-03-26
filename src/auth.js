@@ -1,4 +1,4 @@
-import { getAuth, setPersistence, signInWithEmailAndPassword, browserSessionPersistence, inMemoryPersistence, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAuth, setPersistence, signInWithEmailAndPassword, browserSessionPersistence, indexedDBLocalPersistence, onAuthStateChanged, signOut } from 'firebase/auth';
 
 export default {
   _user: null,
@@ -10,7 +10,7 @@ export default {
     try {
       const auth = getAuth();
       // Send request
-      await setPersistence(auth, rememberMe ? browserSessionPersistence : inMemoryPersistence).then(async () => {
+      await setPersistence(auth, rememberMe ? indexedDBLocalPersistence : browserSessionPersistence).then(async () => {
         await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
           // Signed in
           this._user = userCredential.user;

@@ -13,9 +13,14 @@ export default [
       //   path: '/profile',
       // },
       {
-        text: 'Dáta',
+        text: ' Dáta',
         icon: 'folder',
         path: '/data',
+      },
+      {
+        text: 'Grafy',
+        icon: 'chart',
+        path: '/charts',
       },
     ],
   },

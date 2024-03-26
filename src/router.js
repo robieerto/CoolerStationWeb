@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from './views/home-page';
 import Profile from './views/profile-page';
 import Data from './views/data-page';
+import Charts from './views/charts-page';
 import defaultLayout from './layouts/side-nav-outer-toolbar';
 import simpleLayout from './layouts/single-card';
 import auth from '@/auth';
@@ -15,7 +16,7 @@ const router = new createRouter({
   routes: [
     {
       path: '/home',
-      name: 'home',
+      name: 'Home',
       meta: {
         requiresAuth: true,
         layout: defaultLayout,
@@ -39,6 +40,15 @@ const router = new createRouter({
         layout: defaultLayout,
       },
       component: Data,
+    },
+    {
+      path: '/charts',
+      name: 'Charts',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout,
+      },
+      component: Charts,
     },
     {
       path: '/login-form',

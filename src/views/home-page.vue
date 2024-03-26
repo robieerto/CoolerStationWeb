@@ -2,7 +2,7 @@
 import { reactive } from 'vue';
 import { ref, onValue } from 'firebase/database';
 import { db } from '@/firebase';
-import { toDate } from '@/utils/helpers';
+import { toFloatNumber, toDate } from '@/utils/helpers';
 
 const stateTemplate = {
   data: {
@@ -25,8 +25,10 @@ const state = reactive(stateTemplate);
 const dbRef = ref(db, 'ESPData/ESP32-6413A8E350CC/ActualData');
 onValue(dbRef, (snapshot) => {
   if (snapshot.exists()) {
-    console.log(snapshot.val());
     state.data = snapshot.val();
+    state.data.energiaVyrobena1 = state.data.energiaVyrobena1 * 10;
+    state.data.energiaVyrobena2 = state.data.energiaVyrobena2 * 10;
+    state.data.energiaVyrobenaCelkovo = state.data.energiaVyrobenaCelkovo * 10;
   } else {
     console.log('No data available');
   }
@@ -50,7 +52,7 @@ onValue(dbRef, (snapshot) => {
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="card-title">Energia aktuálna (GJ)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.energiaAktualna }}</p>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaAktualna, 2) }}</p>
             </div>
           </div>
         </div>
@@ -58,31 +60,31 @@ onValue(dbRef, (snapshot) => {
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="card-title">Energia celkovo (GJ)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.energiaCelkovo }}</p>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaCelkovo, 2) }}</p>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená 1 (KW/h)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.energiaVyrobena1 }}</p>
+              <h5 class="card-title">Energia vyrobená 1 (kW/h)</h5>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobena1, 2) }}</p>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená 2 (KW/h)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.energiaVyrobena2 }}</p>
+              <h5 class="card-title">Energia vyrobená 2 (kW/h)</h5>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobena2, 2) }}</p>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená spolu (KW/h)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.energiaVyrobenaCelkovo }}</p>
+              <h5 class="card-title">Energia vyrobená spolu (kW/h)</h5>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobenaCelkovo, 2) }}</p>
             </div>
           </div>
         </div>
@@ -90,7 +92,7 @@ onValue(dbRef, (snapshot) => {
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="card-title">Teplota vonkajšia (°C)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.teplotaVonkajsia }}</p>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.teplotaVonkajsia, 2) }}</p>
             </div>
           </div>
         </div>
@@ -98,7 +100,7 @@ onValue(dbRef, (snapshot) => {
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="card-title">Teplota vstupná (°C)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.teplotaVstupna }}</p>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.teplotaVstupna, 2) }}</p>
             </div>
           </div>
         </div>
@@ -106,23 +108,23 @@ onValue(dbRef, (snapshot) => {
           <div class="card mt-3">
             <div class="card-body">
               <h5 class="card-title">Teplota výstupná (°C)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.teplotaVystupna }}</p>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.teplotaVystupna, 2) }}</p>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Výkon činný 1 (KW)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.vykonCinny1 }}</p>
+              <h5 class="card-title">Výkon činný 1 (kW)</h5>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.vykonCinny1, 3) }}</p>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Výkon činný 2 (KW)</h5>
-              <p class="card-text fw-bold fs-3">{{ state.data.vykonCinny2 }}</p>
+              <h5 class="card-title">Výkon činný 2 (kW)</h5>
+              <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.vykonCinny2, 3) }}</p>
             </div>
           </div>
         </div>
