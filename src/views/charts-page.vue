@@ -5,7 +5,7 @@ import DxChart, { DxValueAxis, DxArgumentAxis, DxCommonPaneSettings, DxGrid, DxS
 import { reactive } from 'vue';
 import { ref, onValue } from 'firebase/database';
 import { db } from '@/firebase';
-import { floatFormat, dateFormat } from '@/utils/helpers';
+import { toFloatNumber } from '@/utils/helpers';
 
 const state = reactive({
   dataSource: [],
@@ -24,7 +24,23 @@ onValue(dbRef, (snapshot) => {
         energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
       },
     }));
-    console.log(state.dataSource);
+    state.dataSource = state.dataSource.map((record, idx) => {
+      if (idx) {
+        if (record.energiaVyrobena1 < state.dataSource[idx - 1].energiaVyrobena1) {
+          record.energiaVyrobena1 = undefined;
+        }
+        if (record.energiaVyrobena2 < state.dataSource[idx - 1].energiaVyrobena2) {
+          record.energiaVyrobena2 = undefined;
+        }
+        if (record.energiaVyrobenaCelkovo < state.dataSource[idx - 1].energiaVyrobenaCelkovo) {
+          record.energiaVyrobenaCelkovo = undefined;
+        }
+        if (record.teplotaVonkajsia > 100) {
+          record.teplotaVonkajsia = undefined;
+        }
+      }
+      return record;
+    });
   } else {
     console.log('No data available');
   }
@@ -36,6 +52,7 @@ onValue(dbRef, (snapshot) => {
     <h2 class="content-block">Grafy</h2>
     <div class="content-block">
       <DxChart :data-source="state.dataSource" :title="'Energia celkovo'">
+        <!-- :common-series-settings="{ point: { visible: false } }" -->
         <DxSize :height="420" />
         <DxValueAxis :grid="{ opacity: 0.2 }" value-type="numeric">
           <DxLabel :customize-text="({ valueText }) => `${valueText} GJ`" />
@@ -52,7 +69,7 @@ onValue(dbRef, (snapshot) => {
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${valueText} GJ`,
+              text: `${toFloatNumber(valueText, 2)} GJ`,
             })
           "
         />
@@ -78,7 +95,7 @@ onValue(dbRef, (snapshot) => {
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${valueText} kW/h`,
+              text: `${toFloatNumber(valueText, 2)} kW/h`,
             })
           "
         />
@@ -104,7 +121,7 @@ onValue(dbRef, (snapshot) => {
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${valueText} kW/h`,
+              text: `${toFloatNumber(valueText, 2)} kW/h`,
             })
           "
         />
@@ -130,7 +147,7 @@ onValue(dbRef, (snapshot) => {
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${valueText} kW/h`,
+              text: `${toFloatNumber(valueText, 2)} kW/h`,
             })
           "
         />
@@ -156,7 +173,7 @@ onValue(dbRef, (snapshot) => {
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${valueText}${'&#176;C'}`,
+              text: `${toFloatNumber(valueText, 2)}${'&#176;C'}`,
             })
           "
         />
