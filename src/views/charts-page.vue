@@ -1,55 +1,103 @@
 <script setup>
 import 'devextreme/data/odata/store';
 import DxChart, { DxValueAxis, DxArgumentAxis, DxCommonPaneSettings, DxGrid, DxSeries, DxLegend, DxSize, DxBorder, DxLabel, DxTooltip, DxExport, DxLoadingIndicator } from 'devextreme-vue/chart';
+import DxDateBox from 'devextreme-vue/date-box';
 
-import { reactive } from 'vue';
-import { ref, onValue } from 'firebase/database';
+import { reactive, watch } from 'vue';
+import { ref, onValue, get, child } from 'firebase/database';
 import { db } from '@/firebase';
 import { toFloatNumber } from '@/utils/helpers';
 
+const dataPath = 'ESPData/ESP32-6413A8E350CC/Data';
+
+const actualDate = new Date();
+
 const state = reactive({
   dataSource: [],
+  selectedDate: actualDate,
 });
 
-const dbRef = ref(db, 'ESPData/ESP32-6413A8E350CC/Data');
-onValue(dbRef, (snapshot) => {
-  if (snapshot.exists()) {
-    const data = snapshot.val();
-    state.dataSource = Object.keys(data).map((key, idx) => ({
+const dbRef = ref(db, dataPath);
+
+const processDataSource = (data) => {
+  state.dataSource = Object.keys(data)
+    .map((key, idx) => ({
       id: idx,
       ...{
         ...data[key],
         energiaVyrobena1: data[key].energiaVyrobena1 * 10,
         energiaVyrobena2: data[key].energiaVyrobena2 * 10,
         energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
+        cas: data[key].cas,
       },
-    }));
-    state.dataSource = state.dataSource.map((record, idx) => {
-      if (idx) {
-        if (record.energiaVyrobena1 < state.dataSource[idx - 1].energiaVyrobena1) {
-          record.energiaVyrobena1 = undefined;
-        }
-        if (record.energiaVyrobena2 < state.dataSource[idx - 1].energiaVyrobena2) {
-          record.energiaVyrobena2 = undefined;
-        }
-        if (record.energiaVyrobenaCelkovo < state.dataSource[idx - 1].energiaVyrobenaCelkovo) {
-          record.energiaVyrobenaCelkovo = undefined;
-        }
-        if (record.teplotaVonkajsia > 100) {
-          record.teplotaVonkajsia = undefined;
-        }
+    }))
+    .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString());
+
+  state.dataSource = state.dataSource.map((record, idx) => {
+    if (idx) {
+      if (record.energiaVyrobena1 < state.dataSource[idx - 1].energiaVyrobena1) {
+        record.energiaVyrobena1 = undefined;
       }
-      return record;
-    });
-  } else {
-    console.log('No data available');
+      if (record.energiaVyrobena2 < state.dataSource[idx - 1].energiaVyrobena2) {
+        record.energiaVyrobena2 = undefined;
+      }
+      if (record.energiaVyrobenaCelkovo < state.dataSource[idx - 1].energiaVyrobenaCelkovo) {
+        record.energiaVyrobenaCelkovo = undefined;
+      }
+      if (record.teplotaVonkajsia > 100) {
+        record.teplotaVonkajsia = undefined;
+      }
+    }
+    return record;
+  });
+};
+
+onValue(dbRef, (snapshot) => {
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    processDataSource(data);
   }
 });
+
+const getData = () => {
+  const dbRef = ref(db);
+  get(child(dbRef, dataPath))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        processDataSource(data);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+watch(
+  () => state.selectedDate,
+  () => {
+    getData();
+  }
+);
+
+const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTimeString('sk-SK');
 </script>
 
 <template>
   <div>
-    <h2 class="content-block">Grafy</h2>
+    <div class="content-block mt-0">
+      <div class="col-sm-auto">
+        <div>
+          <h2>Grafy</h2>
+        </div>
+      </div>
+      <div class="col-sm-3 mt-3 mb-3">
+        <div>
+          <DxDateBox v-model="state.selectedDate" :input-attr="{ 'aria-label': 'Date' }" type="date" :max="actualDate" />
+        </div>
+      </div>
+    </div>
+
     <div class="content-block">
       <DxChart :data-source="state.dataSource" :title="'Energia celkovo'">
         <!-- :common-series-settings="{ point: { visible: false } }" -->
@@ -59,6 +107,7 @@ onValue(dbRef, (snapshot) => {
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
           <DxGrid :visible="true" :opacity="0.5" />
+          <DxLabel :customize-text="customizeTimeAxisLabel" />
         </DxArgumentAxis>
         <DxCommonPaneSettings>
           <DxBorder :visible="true" :width="2" :top="false" :right="false" />
@@ -84,6 +133,7 @@ onValue(dbRef, (snapshot) => {
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
+          <DxLabel :customize-text="customizeTimeAxisLabel" />
           <DxGrid :visible="true" :opacity="0.5" />
         </DxArgumentAxis>
         <DxCommonPaneSettings>
@@ -110,6 +160,7 @@ onValue(dbRef, (snapshot) => {
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
+          <DxLabel :customize-text="customizeTimeAxisLabel" />
           <DxGrid :visible="true" :opacity="0.5" />
         </DxArgumentAxis>
         <DxCommonPaneSettings>
@@ -136,6 +187,7 @@ onValue(dbRef, (snapshot) => {
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
+          <DxLabel :customize-text="customizeTimeAxisLabel" />
           <DxGrid :visible="true" :opacity="0.5" />
         </DxArgumentAxis>
         <DxCommonPaneSettings>
@@ -162,6 +214,7 @@ onValue(dbRef, (snapshot) => {
           <DxLabel :customize-text="({ valueText }) => `${valueText} &#176;C`" />
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
+          <DxLabel :customize-text="customizeTimeAxisLabel" />
           <DxGrid :visible="true" :opacity="0.5" />
         </DxArgumentAxis>
         <DxCommonPaneSettings>

@@ -53,7 +53,7 @@ export const dxMessages = {
     'dxDateBox-simulatedDataPickerTitleTime': 'Vyberte \u010das',
     'dxDateBox-simulatedDataPickerTitleDate': 'Vyberte d\u00e1tum',
     'dxDateBox-simulatedDataPickerTitleDateTime': 'Vyberte d\u00e1tum a \u010das',
-    'dxDateBox-validation-datetime': 'Hodnota mus\u00ED by\u0165 d\u00E1tum a \u010Das',
+    'dxDateBox-validation-datetime': 'Hodnota mus\u00ED by\u0165 d\u00E1tum', // a \u010Das
     'dxFileUploader-selectFile': 'Vyberte s\u00FAbor',
     'dxFileUploader-dropFile': 'alebo presu\u0148te s\u00FAbor sem',
     'dxFileUploader-bytes': 'bytov',
