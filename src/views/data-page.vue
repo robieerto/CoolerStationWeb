@@ -36,7 +36,8 @@ const processDataSource = (data) => {
       },
     }))
     .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
-    .reverse();
+    .reverse()
+    .sort((a, b) => new Date(b.cas) - new Date(a.cas));
 };
 
 onValue(dbRef, (snapshot) => {
@@ -129,9 +130,9 @@ const onExporting = (e) => {
       <DxColumn data-field="den" caption="Deň" :visible="false" />
       <DxColumn data-field="cas" caption="Čas" data-type="datetime" :format="dateFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
       <DxColumn data-field="energiaCelkovo" caption="Energia celkovo (GJ)" data-type="number" :format="floatFormat" />
-      <DxColumn data-field="energiaVyrobena1" caption="Energia vyrobená 1 (kW/h)" data-type="number" :format="floatFormat" />
-      <DxColumn data-field="energiaVyrobena2" caption="Energia vyrobená 2 (kW/h)" data-type="number" :format="floatFormat" />
-      <DxColumn data-field="energiaVyrobenaCelkovo" caption="Energia vyrobená spolu (kW/h)" data-type="number" :format="floatFormat" />
+      <DxColumn data-field="energiaVyrobena1" caption="Spotreba energie 1 (kW/h)" data-type="number" :format="floatFormat" />
+      <DxColumn data-field="energiaVyrobena2" caption="Spotreba energie 2 (kW/h)" data-type="number" :format="floatFormat" />
+      <DxColumn data-field="energiaVyrobenaCelkovo" caption="Spotreba energie spolu (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="teplotaVonkajsia" caption="Teplota vonkajšia (°C)" data-type="number" :format="floatFormat" />
     </DxDataGrid>
   </div>

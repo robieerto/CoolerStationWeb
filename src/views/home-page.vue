@@ -67,7 +67,7 @@ onValue(dbRef, (snapshot) => {
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená 1 (kW/h)</h5>
+              <h5 class="card-title">Spotreba energie 1 (kW/h)</h5>
               <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobena1, 2) }}</p>
             </div>
           </div>
@@ -75,7 +75,7 @@ onValue(dbRef, (snapshot) => {
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená 2 (kW/h)</h5>
+              <h5 class="card-title">Spotreba energie 2 (kW/h)</h5>
               <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobena2, 2) }}</p>
             </div>
           </div>
@@ -83,7 +83,7 @@ onValue(dbRef, (snapshot) => {
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia vyrobená spolu (kW/h)</h5>
+              <h5 class="card-title">Spotreba energie spolu (kW/h)</h5>
               <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaVyrobenaCelkovo, 2) }}</p>
             </div>
           </div>

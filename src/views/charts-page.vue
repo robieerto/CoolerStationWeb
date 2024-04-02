@@ -31,22 +31,25 @@ const processDataSource = (data) => {
         cas: data[key].cas,
       },
     }))
-    .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString());
+    .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
+    .sort((a, b) => new Date(a.cas) - new Date(b.cas));
 
   state.dataSource = state.dataSource.map((record, idx) => {
     if (idx) {
-      if (record.energiaVyrobena1 < state.dataSource[idx - 1].energiaVyrobena1) {
+      for (var i = idx - 1; state.dataSource[idx - 1] === undefined || i > 0; i--);
+
+      if (record.energiaVyrobena1 < state.dataSource[i].energiaVyrobena1) {
         record.energiaVyrobena1 = undefined;
       }
-      if (record.energiaVyrobena2 < state.dataSource[idx - 1].energiaVyrobena2) {
+      if (record.energiaVyrobena2 < state.dataSource[i].energiaVyrobena2) {
         record.energiaVyrobena2 = undefined;
       }
-      if (record.energiaVyrobenaCelkovo < state.dataSource[idx - 1].energiaVyrobenaCelkovo) {
+      if (record.energiaVyrobenaCelkovo < state.dataSource[i].energiaVyrobenaCelkovo) {
         record.energiaVyrobenaCelkovo = undefined;
       }
-      if (record.teplotaVonkajsia > 100) {
-        record.teplotaVonkajsia = undefined;
-      }
+    }
+    if (record.teplotaVonkajsia > 100) {
+      record.teplotaVonkajsia = undefined;
     }
     return record;
   });
@@ -127,7 +130,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
       </DxChart>
     </div>
     <div class="content-block">
-      <DxChart :data-source="state.dataSource" :title="'Energia vyrobená 1'">
+      <DxChart :data-source="state.dataSource" :title="'Spotreba energie 1'">
         <DxSize :height="420" />
         <DxValueAxis :grid="{ opacity: 0.2 }" value-type="numeric">
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
@@ -154,7 +157,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
       </DxChart>
     </div>
     <div class="content-block">
-      <DxChart :data-source="state.dataSource" :title="'Energia vyrobená 2'">
+      <DxChart :data-source="state.dataSource" :title="'Spotreba energie 2'">
         <DxSize :height="420" />
         <DxValueAxis :grid="{ opacity: 0.2 }" value-type="numeric">
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
@@ -181,7 +184,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
       </DxChart>
     </div>
     <div class="content-block">
-      <DxChart :data-source="state.dataSource" :title="'Energia vyrobená spolu'">
+      <DxChart :data-source="state.dataSource" :title="'Spotreba energie spolu'">
         <DxSize :height="420" />
         <DxValueAxis :grid="{ opacity: 0.2 }" value-type="numeric">
           <DxLabel :customize-text="({ valueText }) => `${valueText} kW/h`" />
