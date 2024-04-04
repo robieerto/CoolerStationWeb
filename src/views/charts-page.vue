@@ -25,6 +25,8 @@ const processDataSource = (data) => {
       id: idx,
       ...{
         ...data[key],
+        energiaAktualna: data[key].energiaAktualna * 277.778,
+        energiaCelkovo: data[key].energiaCelkovo * 277.778,
         energiaVyrobena1: data[key].energiaVyrobena1 * 10,
         energiaVyrobena2: data[key].energiaVyrobena2 * 10,
         energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
@@ -106,7 +108,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
         <!-- :common-series-settings="{ point: { visible: false } }" -->
         <DxSize :height="420" />
         <DxValueAxis :grid="{ opacity: 0.2 }" value-type="numeric">
-          <DxLabel :customize-text="({ valueText }) => `${valueText} GJ`" />
+          <DxLabel :customize-text="({ valueText }) => `${valueText} (kW/h)`" />
         </DxValueAxis>
         <DxArgumentAxis type="discrete">
           <DxGrid :visible="true" :opacity="0.5" />
@@ -121,7 +123,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
           :enabled="true"
           :customize-tooltip="
             ({ valueText }) => ({
-              text: `${toFloatNumber(valueText, 2)} GJ`,
+              text: `${toFloatNumber(valueText, 2)} (kW/h)`,
             })
           "
         />

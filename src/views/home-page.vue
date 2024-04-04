@@ -26,6 +26,8 @@ const dbRef = ref(db, 'ESPData/ESP32-6413A8E350CC/ActualData');
 onValue(dbRef, (snapshot) => {
   if (snapshot.exists()) {
     state.data = snapshot.val();
+    state.data.energiaAktualna = state.data.energiaAktualna * 277.778;
+    state.data.energiaCelkovo = state.data.energiaCelkovo * 277.778;
     state.data.energiaVyrobena1 = state.data.energiaVyrobena1 * 10;
     state.data.energiaVyrobena2 = state.data.energiaVyrobena2 * 10;
     state.data.energiaVyrobenaCelkovo = state.data.energiaVyrobenaCelkovo * 10;
@@ -51,7 +53,7 @@ onValue(dbRef, (snapshot) => {
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia aktuálna (GJ)</h5>
+              <h5 class="card-title">Energia aktuálna (kW/h)</h5>
               <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaAktualna, 2) }}</p>
             </div>
           </div>
@@ -59,7 +61,7 @@ onValue(dbRef, (snapshot) => {
         <div class="col-sm-4">
           <div class="card mt-3">
             <div class="card-body">
-              <h5 class="card-title">Energia celkovo (GJ)</h5>
+              <h5 class="card-title">Energia celkovo (kW/h)</h5>
               <p class="card-text fw-bold fs-3">{{ toFloatNumber(state.data.energiaCelkovo, 2) }}</p>
             </div>
           </div>

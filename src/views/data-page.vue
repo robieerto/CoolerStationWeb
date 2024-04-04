@@ -29,6 +29,8 @@ const processDataSource = (data) => {
       id: idx,
       ...{
         ...data[key],
+        energiaAktualna: data[key].energiaAktualna * 277.778,
+        energiaCelkovo: data[key].energiaCelkovo * 277.778,
         energiaVyrobena1: data[key].energiaVyrobena1 * 10,
         energiaVyrobena2: data[key].energiaVyrobena2 * 10,
         energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
@@ -129,7 +131,7 @@ const onExporting = (e) => {
       <DxColumn data-field="mesiac" caption="Mesiac" :visible="false" />
       <DxColumn data-field="den" caption="Deň" :visible="false" />
       <DxColumn data-field="cas" caption="Čas" data-type="datetime" :format="dateFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
-      <DxColumn data-field="energiaCelkovo" caption="Energia celkovo (GJ)" data-type="number" :format="floatFormat" />
+      <DxColumn data-field="energiaCelkovo" caption="Energia celkovo (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena1" caption="Spotreba energie 1 (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena2" caption="Spotreba energie 2 (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobenaCelkovo" caption="Spotreba energie spolu (kW/h)" data-type="number" :format="floatFormat" />
