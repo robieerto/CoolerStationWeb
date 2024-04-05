@@ -37,8 +37,18 @@ const processDataSource = (data) => {
     .sort((a, b) => new Date(a.cas) - new Date(b.cas));
 
   state.dataSource = state.dataSource.map((record, idx) => {
+    if (!idx) {
+      if (record.energiaVyrobena1 <= 0) {
+        record.energiaVyrobena1 = undefined;
+        record.energiaVyrobenaCelkovo = undefined;
+      }
+      if (record.energiaVyrobena2 <= 0) {
+        record.energiaVyrobena2 = undefined;
+        record.energiaVyrobenaCelkovo = undefined;
+      }
+    }
     if (idx) {
-      for (var i = idx - 1; state.dataSource[idx - 1] === undefined || i > 0; i--);
+      for (var i = idx - 1; state.dataSource[i].energiaVyrobenaCelkovo === undefined && i > 0; i--);
 
       if (record.energiaVyrobena1 < state.dataSource[i].energiaVyrobena1) {
         record.energiaVyrobena1 = undefined;
