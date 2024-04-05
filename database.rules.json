@@ -1,6 +1,13 @@
 {
   "rules": {
     ".read": "auth != null",
-    ".write": "auth != null && newData.exists()"
+    ".write": "auth != null && auth.uid === 'g7kFvEuEh8V5Ote2hm9K1463mZ53' && newData.exists()",
+    "ESPData": {
+      "$device_id": {
+        "Data": {
+          ".indexOn": "cas"
+        }
+      }
+    }
   }
 }
