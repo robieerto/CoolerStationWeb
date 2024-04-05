@@ -41,7 +41,8 @@ const onExporting = (e) => {
     topLeftCell: { row: 1, column: 1 },
   }).then(() => {
     workbook.xlsx.writeBuffer().then((buffer) => {
-      const isoDate = store.selectedDate.toISOString().split('T')[0];
+      console.log(store.selectedDate);
+      const isoDate = new Date(store.selectedDate).toISOString().split('T')[0];
       saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `data-${isoDate}.xlsx`);
     });
   });
