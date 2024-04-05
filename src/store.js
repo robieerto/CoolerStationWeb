@@ -35,6 +35,8 @@ const getDataSource = () => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         processDataSource(data);
+      } else {
+        store.dataSource = [];
       }
     },
     {
