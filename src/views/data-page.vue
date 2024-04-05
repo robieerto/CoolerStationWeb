@@ -7,21 +7,19 @@ import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
 
 import { reactive } from 'vue';
-import { ref, onValue, get, child } from 'firebase/database';
+import { ref, onValue, query, orderByChild, startAt, endAt } from 'firebase/database';
 import { db } from '@/firebase';
-import { floatFormat, dateFormat } from '@/utils/helpers';
+import { floatFormat, dateFormat, toCustomDate, getTomorrow } from '@/utils/helpers';
 
 const dataPath = 'ESPData/ESP32-6413A8E350CC/Data';
 
-const actualDate = new Date();
+const actualDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 const state = reactive({
   dataSource: [],
   dataGridInstance: null,
   selectedDate: actualDate,
 });
-
-const dbRef = ref(db, dataPath);
 
 const processDataSource = (data) => {
   state.dataSource = Object.keys(data)
@@ -34,34 +32,45 @@ const processDataSource = (data) => {
         energiaVyrobena1: data[key].energiaVyrobena1 * 10,
         energiaVyrobena2: data[key].energiaVyrobena2 * 10,
         energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
-        cas: new Date(data[key].cas).toISOString(),
+        cas: data[key].cas,
       },
     }))
-    .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
-    .reverse()
-    .sort((a, b) => new Date(b.cas) - new Date(a.cas));
+    .reverse();
+  // .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
+  // .reverse()
+  // .sort((a, b) => new Date(b.cas) - new Date(a.cas));
 };
 
-onValue(dbRef, (snapshot) => {
+const dbQuery = () => {
+  const startDate = toCustomDate(state.selectedDate);
+  const endDate = toCustomDate(getTomorrow(state.selectedDate));
+  return query(ref(db, dataPath), orderByChild('cas'), startAt(startDate), endAt(endDate));
+};
+
+const getData = () => {
+  onValue(
+    dbQuery(),
+    (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        processDataSource(data);
+      }
+    },
+    {
+      onlyOnce: true,
+    }
+  );
+};
+
+onValue(dbQuery(), (snapshot) => {
+  if (new Date(state.selectedDate).toDateString() !== actualDate.toDateString()) {
+    return;
+  }
   if (snapshot.exists()) {
     const data = snapshot.val();
     processDataSource(data);
   }
 });
-
-const getData = () => {
-  const dbRef = ref(db);
-  get(child(dbRef, dataPath))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        processDataSource(data);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
 
 function onDataGridInitialized(e) {
   state.dataGridInstance = e.component;

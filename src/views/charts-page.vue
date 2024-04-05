@@ -4,37 +4,34 @@ import DxChart, { DxValueAxis, DxArgumentAxis, DxCommonPaneSettings, DxGrid, DxS
 import DxDateBox from 'devextreme-vue/date-box';
 
 import { reactive, watch } from 'vue';
-import { ref, onValue, get, child } from 'firebase/database';
+import { ref, onValue, query, orderByChild, startAt, endAt } from 'firebase/database';
 import { db } from '@/firebase';
-import { toFloatNumber } from '@/utils/helpers';
+import { toFloatNumber, toCustomDate, getTomorrow } from '@/utils/helpers';
 
 const dataPath = 'ESPData/ESP32-6413A8E350CC/Data';
 
-const actualDate = new Date();
+const actualDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 const state = reactive({
   dataSource: [],
   selectedDate: actualDate,
 });
 
-const dbRef = ref(db, dataPath);
-
 const processDataSource = (data) => {
-  state.dataSource = Object.keys(data)
-    .map((key, idx) => ({
-      id: idx,
-      ...{
-        ...data[key],
-        energiaAktualna: data[key].energiaAktualna * 277.778,
-        energiaCelkovo: data[key].energiaCelkovo * 277.778,
-        energiaVyrobena1: data[key].energiaVyrobena1 * 10,
-        energiaVyrobena2: data[key].energiaVyrobena2 * 10,
-        energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
-        cas: data[key].cas,
-      },
-    }))
-    .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
-    .sort((a, b) => new Date(a.cas) - new Date(b.cas));
+  state.dataSource = Object.keys(data).map((key, idx) => ({
+    id: idx,
+    ...{
+      ...data[key],
+      energiaAktualna: data[key].energiaAktualna * 277.778,
+      energiaCelkovo: data[key].energiaCelkovo * 277.778,
+      energiaVyrobena1: data[key].energiaVyrobena1 * 10,
+      energiaVyrobena2: data[key].energiaVyrobena2 * 10,
+      energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
+      cas: data[key].cas,
+    },
+  }));
+  // .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
+  // .sort((a, b) => new Date(a.cas) - new Date(b.cas));
 
   state.dataSource = state.dataSource.map((record, idx) => {
     if (!idx) {
@@ -67,26 +64,36 @@ const processDataSource = (data) => {
   });
 };
 
-onValue(dbRef, (snapshot) => {
+const dbQuery = () => {
+  const startDate = toCustomDate(state.selectedDate);
+  const endDate = toCustomDate(getTomorrow(state.selectedDate));
+  return query(ref(db, dataPath), orderByChild('cas'), startAt(startDate), endAt(endDate));
+};
+
+const getData = () => {
+  onValue(
+    dbQuery(),
+    (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        processDataSource(data);
+      }
+    },
+    {
+      onlyOnce: true,
+    }
+  );
+};
+
+onValue(dbQuery(), (snapshot) => {
+  if (new Date(state.selectedDate).toDateString() !== actualDate.toDateString()) {
+    return;
+  }
   if (snapshot.exists()) {
     const data = snapshot.val();
     processDataSource(data);
   }
 });
-
-const getData = () => {
-  const dbRef = ref(db);
-  get(child(dbRef, dataPath))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        processDataSource(data);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
 
 watch(
   () => state.selectedDate,

@@ -12,4 +12,17 @@ const toDate = (value) => {
   else return '';
 };
 
-export { floatFormat, dateFormat, timeFormat, toFloatNumber, toDate };
+const toCustomDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value).toISOString().replace('T', ' ').replace('Z', '');
+  if (date != 'Invalid Date') return date;
+  else return '';
+};
+
+const getTomorrow = (date) => {
+  const tomorrow = new Date(date);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow;
+};
+
+export { floatFormat, dateFormat, timeFormat, toFloatNumber, toDate, toCustomDate, getTomorrow };
