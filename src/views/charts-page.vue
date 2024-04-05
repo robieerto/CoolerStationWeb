@@ -2,6 +2,7 @@
 import 'devextreme/data/odata/store';
 import DxChart, { DxValueAxis, DxArgumentAxis, DxCommonPaneSettings, DxGrid, DxSeries, DxLegend, DxSize, DxBorder, DxLabel, DxTooltip, DxExport, DxLoadingIndicator } from 'devextreme-vue/chart';
 import DxDateBox from 'devextreme-vue/date-box';
+import { DxLoadPanel } from 'devextreme-vue/load-panel';
 
 import { reactive, watch } from 'vue';
 import { actualDate, toFloatNumber } from '@/utils/helpers';
@@ -70,6 +71,8 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
         </div>
       </div>
     </div>
+
+    <DxLoadPanel v-model:visible="store.loading" />
 
     <div class="content-block">
       <DxChart :data-source="state.dataSource" :title="'Energia celkovo'">

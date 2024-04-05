@@ -6,6 +6,7 @@ import { dbRef } from '@/firebase';
 const store = reactive({
   dataSource: [],
   selectedDate: actualDate,
+  loading: true,
 });
 
 const processDataSource = (data) => {
@@ -20,6 +21,8 @@ const processDataSource = (data) => {
       energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
     },
   }));
+
+  store.loading = false;
 };
 
 const dbQuery = () => {

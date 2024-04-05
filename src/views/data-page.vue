@@ -1,6 +1,7 @@
 <script setup>
 import 'devextreme/data/odata/store';
 import DxDataGrid, { DxColumn, DxFilterRow, DxPager, DxPaging, DxExport } from 'devextreme-vue/data-grid';
+import { DxLoadPanel } from 'devextreme-vue/load-panel';
 import DxDateBox from 'devextreme-vue/date-box';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { Workbook } from 'exceljs';
@@ -63,6 +64,8 @@ const onExporting = (e) => {
         </div>
       </div>
     </div>
+
+    <DxLoadPanel v-model:visible="store.loading" />
 
     <DxDataGrid
       class="dx-card wide-card"
