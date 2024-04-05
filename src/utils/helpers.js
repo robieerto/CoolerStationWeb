@@ -2,6 +2,8 @@ const floatFormat = '#,##0.00';
 const dateFormat = 'd.M.yyyy H:mm';
 const timeFormat = 'H:mm';
 
+const actualDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
+
 const toFloatNumber = (value, digits) =>
   value != null && value != undefined && !isNaN(value) ? parseFloat(value).toFixed(digits).toLocaleString('sk-SK', { minimumFractionDigits: 1, maximumFractionDigits: digits }) : '';
 
@@ -25,4 +27,4 @@ const getTomorrow = (date) => {
   return tomorrow;
 };
 
-export { floatFormat, dateFormat, timeFormat, toFloatNumber, toDate, toCustomDate, getTomorrow };
+export { actualDate, floatFormat, dateFormat, timeFormat, toFloatNumber, toDate, toCustomDate, getTomorrow };

@@ -1,10 +1,14 @@
 <script setup>
 import { reactive } from 'vue';
 import { ref, onValue } from 'firebase/database';
-import { db } from '@/firebase';
+import { deviceId, db } from '@/firebase';
 import { toFloatNumber, toDate } from '@/utils/helpers';
 
-const stateTemplate = {
+const actualDataPath = `ESPData/${deviceId}/ActualData`;
+
+const dbRef = ref(db, actualDataPath);
+
+const state = reactive({
   data: {
     cas: null,
     energiaAktualna: null,
@@ -18,11 +22,8 @@ const stateTemplate = {
     vykonCinny1: null,
     vykonCinny2: null,
   },
-};
+});
 
-const state = reactive(stateTemplate);
-
-const dbRef = ref(db, 'ESPData/ESP32-6413A8E350CC/ActualData');
 onValue(dbRef, (snapshot) => {
   if (snapshot.exists()) {
     state.data = snapshot.val();

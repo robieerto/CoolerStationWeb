@@ -4,36 +4,24 @@ import DxChart, { DxValueAxis, DxArgumentAxis, DxCommonPaneSettings, DxGrid, DxS
 import DxDateBox from 'devextreme-vue/date-box';
 
 import { reactive, watch } from 'vue';
-import { ref, onValue, query, orderByChild, startAt, endAt } from 'firebase/database';
-import { db } from '@/firebase';
-import { toFloatNumber, toCustomDate, getTomorrow } from '@/utils/helpers';
-
-const dataPath = 'ESPData/ESP32-6413A8E350CC/Data';
-
-const actualDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
+import { actualDate, toFloatNumber } from '@/utils/helpers';
+import store from '@/store';
 
 const state = reactive({
-  dataSource: [],
-  selectedDate: actualDate,
+  dataSource: processDataSource(store.dataSource),
 });
 
-const processDataSource = (data) => {
-  state.dataSource = Object.keys(data).map((key, idx) => ({
-    id: idx,
-    ...{
-      ...data[key],
-      energiaAktualna: data[key].energiaAktualna * 277.778,
-      energiaCelkovo: data[key].energiaCelkovo * 277.778,
-      energiaVyrobena1: data[key].energiaVyrobena1 * 10,
-      energiaVyrobena2: data[key].energiaVyrobena2 * 10,
-      energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
-      cas: data[key].cas,
-    },
-  }));
-  // .filter((record) => new Date(record.cas).toDateString() === state.selectedDate.toDateString())
-  // .sort((a, b) => new Date(a.cas) - new Date(b.cas));
+watch(
+  () => store.dataSource,
+  (dataSource) => {
+    state.dataSource = processDataSource(dataSource);
+  }
+);
 
-  state.dataSource = state.dataSource.map((record, idx) => {
+function processDataSource(dataSource) {
+  const newData = dataSource.map((x) => ({ ...x }));
+
+  newData.forEach((record, idx) => {
     if (!idx) {
       if (record.energiaVyrobena1 <= 0) {
         record.energiaVyrobena1 = undefined;
@@ -45,64 +33,27 @@ const processDataSource = (data) => {
       }
     }
     if (idx) {
-      for (var i = idx - 1; state.dataSource[i].energiaVyrobenaCelkovo === undefined && i > 0; i--);
+      for (var i = idx - 1; newData[i].energiaVyrobenaCelkovo === undefined && i > 0; i--);
 
-      if (record.energiaVyrobena1 < state.dataSource[i].energiaVyrobena1) {
+      if (record.energiaVyrobena1 < newData[i].energiaVyrobena1) {
         record.energiaVyrobena1 = undefined;
       }
-      if (record.energiaVyrobena2 < state.dataSource[i].energiaVyrobena2) {
+      if (record.energiaVyrobena2 < newData[i].energiaVyrobena2) {
         record.energiaVyrobena2 = undefined;
       }
-      if (record.energiaVyrobenaCelkovo < state.dataSource[i].energiaVyrobenaCelkovo) {
+      if (record.energiaVyrobenaCelkovo < newData[i].energiaVyrobenaCelkovo) {
         record.energiaVyrobenaCelkovo = undefined;
       }
     }
     if (record.teplotaVonkajsia > 100) {
       record.teplotaVonkajsia = undefined;
     }
-    return record;
   });
-};
 
-const dbQuery = () => {
-  const startDate = toCustomDate(state.selectedDate);
-  const endDate = toCustomDate(getTomorrow(state.selectedDate));
-  return query(ref(db, dataPath), orderByChild('cas'), startAt(startDate), endAt(endDate));
-};
+  return newData;
+}
 
-const getData = () => {
-  onValue(
-    dbQuery(),
-    (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        processDataSource(data);
-      }
-    },
-    {
-      onlyOnce: true,
-    }
-  );
-};
-
-onValue(dbQuery(), (snapshot) => {
-  if (new Date(state.selectedDate).toDateString() !== actualDate.toDateString()) {
-    return;
-  }
-  if (snapshot.exists()) {
-    const data = snapshot.val();
-    processDataSource(data);
-  }
-});
-
-watch(
-  () => state.selectedDate,
-  () => {
-    getData();
-  }
-);
-
-const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTimeString('sk-SK');
+const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTimeString('sk-SK').split(':').slice(0, 2).join(':');
 </script>
 
 <template>
@@ -115,7 +66,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
       </div>
       <div class="col-sm-3 mt-3 mb-3">
         <div>
-          <DxDateBox v-model="state.selectedDate" :input-attr="{ 'aria-label': 'Date' }" type="date" :max="actualDate" />
+          <DxDateBox v-model="store.selectedDate" date-serialization-format="yyyy-MM-dd" :input-attr="{ 'aria-label': 'Date' }" type="date" :max="actualDate" />
         </div>
       </div>
     </div>

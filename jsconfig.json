@@ -2,8 +2,9 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "baseUrl": "./",
     "moduleResolution": "node",
+    // "checkJs": true,
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     },

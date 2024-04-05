@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+import { ref, getDatabase } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -18,6 +18,10 @@ const firebaseConfig = {
   appId: '1:481873393112:web:37dec0bd63b684a7bbaead',
 };
 
+const deviceId = 'ESP32-6413A8E350CC';
+
+const dataPath = `ESPData/${deviceId}/Data`;
+
 // const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 // const emailAuthProvider = firebase.auth.EmailAuthProvider.PROVIDER_ID;
 
@@ -28,4 +32,7 @@ const db = getDatabase(app);
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
-export { db, auth };
+// Get a reference to the database service
+const dbRef = ref(db, dataPath);
+
+export { deviceId, db, auth, dbRef };
