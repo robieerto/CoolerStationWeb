@@ -9,12 +9,14 @@ import saveAs from 'file-saver';
 
 import { reactive, watch } from 'vue';
 import { actualDate, floatFormat, dateFormat } from '@/utils/helpers';
-import store from '@/store';
+import store, { addDataListener } from '@/store';
 
 const state = reactive({
   dataSource: processDataSource(store.dataSource),
   dataGridInstance: null,
 });
+
+addDataListener();
 
 watch(
   () => store.dataSource,

@@ -6,11 +6,13 @@ import { DxLoadPanel } from 'devextreme-vue/load-panel';
 
 import { reactive, watch } from 'vue';
 import { actualDate, toFloatNumber } from '@/utils/helpers';
-import store from '@/store';
+import store, { addDataListener } from '@/store';
 
 const state = reactive({
   dataSource: processDataSource(store.dataSource),
 });
+
+addDataListener();
 
 watch(
   () => store.dataSource,

@@ -6,6 +6,7 @@ import { dbRef } from '@/firebase';
 const store = reactive({
   dataSource: [],
   selectedDate: actualDate,
+  isListenerAdded: false,
   loading: true,
 });
 
@@ -21,7 +22,6 @@ const processDataSource = (data) => {
       energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
     },
   }));
-
   store.loading = false;
 };
 
@@ -48,15 +48,20 @@ const getDataSource = () => {
   );
 };
 
-onValue(dbQuery(), (snapshot) => {
-  if (new Date(store.selectedDate).toDateString() !== actualDate.toDateString()) {
-    return;
+const addDataListener = () => {
+  if (!store.isListenerAdded) {
+    store.isListenerAdded = true;
+    onValue(dbQuery(), (snapshot) => {
+      if (new Date(store.selectedDate).toDateString() !== actualDate.toDateString()) {
+        return;
+      }
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        processDataSource(data);
+      }
+    });
   }
-  if (snapshot.exists()) {
-    const data = snapshot.val();
-    processDataSource(data);
-  }
-});
+};
 
 watch(
   () => store.selectedDate,
@@ -65,4 +70,4 @@ watch(
   }
 );
 
-export default store;
+export { store as default, addDataListener };
