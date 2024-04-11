@@ -214,3 +214,17 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleTi
     </div>
   </div>
 </template>
+
+<style>
+.action {
+  width: 270px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dx-icon.dx-icon-xlsxfile::before {
+  content: '\f05f';
+}
+</style>

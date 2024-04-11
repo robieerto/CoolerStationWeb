@@ -8,7 +8,7 @@ import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
 
 import { reactive, watch } from 'vue';
-import { actualDate, floatFormat, dateTimeFormat } from '@/utils/helpers';
+import { actualDate, floatFormat, dateFormat } from '@/utils/helpers';
 import store, { addDataListener } from '@/store';
 
 const state = reactive({
@@ -95,7 +95,7 @@ const onExporting = (e) => {
       <DxColumn data-field="rok" caption="Rok" :visible="false" />
       <DxColumn data-field="mesiac" caption="Mesiac" :visible="false" />
       <DxColumn data-field="den" caption="Deň" :visible="false" />
-      <DxColumn data-field="cas" caption="Čas" data-type="datetime" :format="dateTimeFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
+      <DxColumn data-field="cas" caption="Čas" data-type="datetime" :format="dateFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
       <DxColumn data-field="energiaCelkovo" caption="Energia celkovo (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena1" caption="Spotreba energie 1 (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena2" caption="Spotreba energie 2 (kW/h)" data-type="number" :format="floatFormat" />
@@ -104,17 +104,3 @@ const onExporting = (e) => {
     </DxDataGrid>
   </div>
 </template>
-
-<style>
-.action {
-  width: 270px;
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dx-icon.dx-icon-xlsxfile::before {
-  content: '\f05f';
-}
-</style>
