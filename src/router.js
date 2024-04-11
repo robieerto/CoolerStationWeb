@@ -4,6 +4,8 @@ import Home from './views/home-page';
 import Profile from './views/profile-page';
 import Data from './views/data-page';
 import Charts from './views/charts-page';
+import DailyData from './views/month-data-page';
+import DailyCharts from './views/month-charts-page';
 import defaultLayout from './layouts/side-nav-outer-toolbar';
 import simpleLayout from './layouts/single-card';
 import auth from '@/auth';
@@ -49,6 +51,24 @@ const router = new createRouter({
         layout: defaultLayout,
       },
       component: Charts,
+    },
+    {
+      path: '/month-data',
+      name: 'DailyData',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout,
+      },
+      component: DailyData,
+    },
+    {
+      path: '/month-charts',
+      name: 'DailyCharts',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout,
+      },
+      component: DailyCharts,
     },
     {
       path: '/login-form',

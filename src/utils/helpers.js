@@ -1,8 +1,19 @@
 const floatFormat = '#,##0.00';
-const dateFormat = 'd.M.yyyy H:mm';
+const dateFormat = 'd.M.yyyy';
+const dateTimeFormat = 'd.M.yyyy H:mm';
 const timeFormat = 'H:mm';
 
 const actualDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
+
+const months = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December'];
+
+const years = (() => {
+  const years = [];
+  for (let year = 2024; year <= actualDate.getFullYear(); year++) {
+    years.push(year);
+  }
+  return years;
+})();
 
 const toFloatNumber = (value, digits) =>
   value != null && value != undefined && !isNaN(value) ? parseFloat(value).toFixed(digits).toLocaleString('sk-SK', { minimumFractionDigits: 1, maximumFractionDigits: digits }) : '';
@@ -27,4 +38,8 @@ const getTomorrow = (date) => {
   return tomorrow;
 };
 
-export { actualDate, floatFormat, dateFormat, timeFormat, toFloatNumber, toDate, toCustomDate, getTomorrow };
+const toStrDateValue = (value) => {
+  return (value < 10 ? '0' : '') + value;
+};
+
+export { actualDate, months, years, floatFormat, dateFormat, dateTimeFormat, timeFormat, toFloatNumber, toDate, toCustomDate, getTomorrow, toStrDateValue };

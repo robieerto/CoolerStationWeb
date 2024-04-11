@@ -1,17 +1,22 @@
 import { reactive, watch } from 'vue';
-import { query, onValue, orderByChild, startAt, endAt } from 'firebase/database';
-import { actualDate, toCustomDate, getTomorrow } from '@/utils/helpers';
+import { query, onValue, orderByChild, startAt, endAt, limitToLast } from 'firebase/database';
+import { actualDate, months, toCustomDate, getTomorrow, toStrDateValue } from '@/utils/helpers';
 import { dbRef } from '@/firebase';
 
 const store = reactive({
   dataSource: [],
+  dailyDataSource: [],
   selectedDate: actualDate,
+  selectedMonth: months[actualDate.getMonth()],
+  selectedYear: actualDate.getFullYear(),
   isListenerAdded: false,
+  isDailyDataLoaded: false,
   loading: true,
 });
 
 const processDataSource = (data) => {
-  store.dataSource = Object.keys(data).map((key, idx) => ({
+  store.loading = false;
+  return Object.keys(data).map((key, idx) => ({
     id: idx,
     ...{
       ...data[key],
@@ -22,22 +27,28 @@ const processDataSource = (data) => {
       energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
     },
   }));
-  store.loading = false;
 };
 
-const dbQuery = () => {
-  const startDate = toCustomDate(store.selectedDate);
-  const endDate = toCustomDate(getTomorrow(store.selectedDate));
+const dbQuery = (date) => {
+  const startDate = toCustomDate(date);
+  const endDate = toCustomDate(getTomorrow(date));
   return query(dbRef, orderByChild('cas'), startAt(startDate), endAt(endDate));
 };
 
+const dbDailyQuery = (date) => {
+  const startDate = toCustomDate(date);
+  const endDate = toCustomDate(getTomorrow(date));
+  return query(dbRef, orderByChild('cas'), startAt(startDate), endAt(endDate), limitToLast(1));
+};
+
 const getDataSource = () => {
+  store.loading = true;
   onValue(
-    dbQuery(),
+    dbQuery(store.selectedDate),
     (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        processDataSource(data);
+        store.dataSource = processDataSource(data);
       } else {
         store.dataSource = [];
       }
@@ -48,16 +59,51 @@ const getDataSource = () => {
   );
 };
 
+const getDailyDataSource = () => {
+  store.loading = true;
+  const dailyDataSource = [];
+  const year = store.selectedYear;
+  const month = months.findIndex((m) => m === store.selectedMonth) + 1;
+  const monthStr = toStrDateValue(month);
+  const lastDayOfMonth = actualDate.getFullYear() == year && actualDate.getMonth() + 1 == month ? actualDate.getDate() - 1 : new Date(year, month, 0).getDate();
+  for (let i = 1; i <= lastDayOfMonth; i++) {
+    const dayStr = toStrDateValue(i);
+    const date = new Date(`${year}-${monthStr}-${dayStr}`);
+    onValue(
+      dbDailyQuery(date),
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          dailyDataSource.push(Object.values(data)[0]);
+        }
+        if (i == lastDayOfMonth) {
+          store.dailyDataSource = processDataSource(dailyDataSource);
+        }
+      },
+      {
+        onlyOnce: true,
+      }
+    );
+  }
+};
+
+const initDailyData = () => {
+  if (!store.isDailyDataLoaded) {
+    store.isDailyDataLoaded = true;
+    getDailyDataSource();
+  }
+};
+
 const addDataListener = () => {
   if (!store.isListenerAdded) {
     store.isListenerAdded = true;
-    onValue(dbQuery(), (snapshot) => {
+    onValue(dbQuery(store.selectedDate), (snapshot) => {
       if (new Date(store.selectedDate).toDateString() !== actualDate.toDateString()) {
         return;
       }
       if (snapshot.exists()) {
         const data = snapshot.val();
-        processDataSource(data);
+        store.dataSource = processDataSource(data);
       }
     });
   }
@@ -70,4 +116,11 @@ watch(
   }
 );
 
-export { store as default, addDataListener };
+watch(
+  () => [store.selectedMonth, store.selectedYear],
+  () => {
+    getDailyDataSource();
+  }
+);
+
+export { store as default, addDataListener, initDailyData };
