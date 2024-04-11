@@ -29,7 +29,7 @@ const customizeTimeAxisLabel = ({ valueText }) => new Date(valueText).toLocaleDa
     <div class="content-block mt-0">
       <div class="col-sm-auto">
         <div>
-          <h2>Grafy</h2>
+          <h2>Rozdiely dní grafy</h2>
         </div>
       </div>
       <div class="d-flex mt-3 mb-3">

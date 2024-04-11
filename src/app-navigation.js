@@ -5,7 +5,7 @@ export default [
     icon: 'home',
   },
   {
-    text: 'História denne',
+    text: 'História',
     icon: 'event',
     items: [
       {
@@ -21,7 +21,7 @@ export default [
     ],
   },
   {
-    text: 'História mesačne',
+    text: 'Rozdiely dní',
     icon: 'clock',
     items: [
       {

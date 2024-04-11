@@ -29,6 +29,25 @@ const processDataSource = (data) => {
   }));
 };
 
+const processDailyDataSource = (data) => {
+  const processedDataSource = processDataSource(data);
+  return processedDataSource.reduce((arr, obj) => {
+    var nextId = obj.id + 1;
+    if (nextId < processedDataSource.length) {
+      var nextObj = processedDataSource[nextId];
+      arr.push({
+        id: obj.id,
+        cas: nextObj.cas,
+        energiaCelkovo: nextObj.energiaCelkovo - obj.energiaCelkovo,
+        energiaVyrobena1: nextObj.energiaVyrobena1 - obj.energiaVyrobena1,
+        energiaVyrobena2: nextObj.energiaVyrobena2 - obj.energiaVyrobena2,
+        energiaVyrobenaCelkovo: nextObj.energiaVyrobenaCelkovo - obj.energiaVyrobenaCelkovo,
+      });
+    }
+    return arr;
+  }, []);
+};
+
 const dbQuery = (date) => {
   const startDate = toCustomDate(date);
   const endDate = toCustomDate(getTomorrow(date));
@@ -66,9 +85,8 @@ const getDailyDataSource = () => {
   const month = months.findIndex((m) => m === store.selectedMonth) + 1;
   const monthStr = toStrDateValue(month);
   const lastDayOfMonth = actualDate.getFullYear() == year && actualDate.getMonth() + 1 == month ? actualDate.getDate() - 1 : new Date(year, month, 0).getDate();
-  for (let i = 1; i <= lastDayOfMonth; i++) {
-    const dayStr = toStrDateValue(i);
-    const date = new Date(`${year}-${monthStr}-${dayStr}`);
+  for (let i = 0; i <= lastDayOfMonth; i++) {
+    const date = new Date(`${year}-${monthStr}-0${i}`);
     onValue(
       dbDailyQuery(date),
       (snapshot) => {
@@ -77,7 +95,7 @@ const getDailyDataSource = () => {
           dailyDataSource.push(Object.values(data)[0]);
         }
         if (i == lastDayOfMonth) {
-          store.dailyDataSource = processDataSource(dailyDataSource);
+          store.dailyDataSource = processDailyDataSource(dailyDataSource);
         }
       },
       {

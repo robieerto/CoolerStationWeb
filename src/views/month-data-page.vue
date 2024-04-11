@@ -54,7 +54,7 @@ const onExporting = (e) => {
     <div class="content-block mt-0">
       <div class="col-sm-auto">
         <div>
-          <h2>Mesačné dáta</h2>
+          <h2>Rozdiely dní dáta</h2>
         </div>
       </div>
       <div class="d-flex mt-3 mb-3">
@@ -98,12 +98,12 @@ const onExporting = (e) => {
       <DxColumn data-field="rok" caption="Rok" :visible="false" />
       <DxColumn data-field="mesiac" caption="Mesiac" :visible="false" />
       <DxColumn data-field="den" caption="Deň" :visible="false" />
-      <DxColumn data-field="cas" caption="Čas" data-type="datetime" :format="dateTimeFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
+      <DxColumn data-field="cas" caption="Dátum" data-type="datetime" :format="dateTimeFormat" :editor-options="{ max: actualDate }" :fixed="true" :width="190" />
       <DxColumn data-field="energiaCelkovo" caption="Energia celkovo (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena1" caption="Spotreba energie 1 (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobena2" caption="Spotreba energie 2 (kW/h)" data-type="number" :format="floatFormat" />
       <DxColumn data-field="energiaVyrobenaCelkovo" caption="Spotreba energie spolu (kW/h)" data-type="number" :format="floatFormat" />
-      <DxColumn data-field="teplotaVonkajsia" caption="Teplota vonkajšia (°C)" data-type="number" :format="floatFormat" />
+      <DxColumn data-field="teplotaVonkajsia" caption="Teplota vonkajšia (°C)" data-type="number" :format="floatFormat" :visible="false" />
     </DxDataGrid>
   </div>
 </template>
