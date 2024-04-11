@@ -2,32 +2,28 @@
 import 'devextreme/data/odata/store';
 import DxDataGrid, { DxColumn, DxFilterRow, DxPager, DxPaging, DxExport } from 'devextreme-vue/data-grid';
 import { DxLoadPanel } from 'devextreme-vue/load-panel';
-import DxDateBox from 'devextreme-vue/date-box';
+import DxSelectBox from 'devextreme-vue/select-box';
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { Workbook } from 'exceljs';
 import saveAs from 'file-saver';
 
 import { reactive, watch } from 'vue';
-import { actualDate, floatFormat, dateTimeFormat } from '@/utils/helpers';
-import store, { addDataListener } from '@/store';
+import { actualDate, months, years, floatFormat, dateTimeFormat } from '@/utils/helpers';
+import store, { initDailyData } from '@/store';
 
 const state = reactive({
-  dataSource: processDataSource(store.dataSource),
+  dataSource: store.dailyDataSource,
   dataGridInstance: null,
 });
 
-addDataListener();
+initDailyData();
 
 watch(
-  () => store.dataSource,
+  () => store.dailyDataSource,
   (dataSource) => {
-    state.dataSource = processDataSource(dataSource);
+    state.dataSource = dataSource;
   }
 );
-
-function processDataSource(dataSource) {
-  return dataSource.toReversed();
-}
 
 function onDataGridInitialized(e) {
   state.dataGridInstance = e.component;
@@ -58,12 +54,19 @@ const onExporting = (e) => {
     <div class="content-block mt-0">
       <div class="col-sm-auto">
         <div>
-          <h2>Dáta</h2>
+          <h2>Mesačné dáta</h2>
         </div>
       </div>
-      <div class="col-sm-3 mt-3 mb-3">
-        <div>
-          <DxDateBox v-model="store.selectedDate" date-serialization-format="yyyy-MM-dd" :input-attr="{ 'aria-label': 'Date' }" type="date" :max="actualDate" />
+      <div class="d-flex mt-3 mb-3">
+        <div class="col-sm-3 me-2">
+          <div>
+            <DxSelectBox v-model="store.selectedMonth" :items="months" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div>
+            <DxSelectBox v-model="store.selectedYear" :items="years" />
+          </div>
         </div>
       </div>
     </div>
