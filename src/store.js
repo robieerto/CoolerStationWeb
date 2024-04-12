@@ -22,7 +22,6 @@ const processDataSource = (data) => {
       energiaVyrobenaCelkovo: data[key].energiaVyrobenaCelkovo * 10,
     },
   }));
-  store.loading = false;
 };
 
 const dbQuery = () => {
@@ -41,6 +40,7 @@ const getDataSource = () => {
       } else {
         store.dataSource = [];
       }
+      store.loading = false;
     },
     {
       onlyOnce: true,
@@ -59,6 +59,7 @@ const addDataListener = () => {
         const data = snapshot.val();
         processDataSource(data);
       }
+      store.loading = false;
     });
   }
 };
